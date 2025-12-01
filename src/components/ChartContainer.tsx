@@ -1,45 +1,35 @@
-import { useEffect, useRef, type FC } from 'react';
-
-declare global {
-    interface Window {
-        TradingView: any;
-    }
-}
+import { useEffect, useState, type FC } from 'react';
+import { LightweightChart } from './LightweightChart';
+import { fetchTrueDataHistory, type OHLCVData } from '../services/TrueDataService';
 
 const ChartContainer: FC = () => {
-    const containerRef = useRef<HTMLDivElement>(null);
+    const [data, setData] = useState<OHLCVData[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const script = document.createElement('script');
-        script.src = 'https://s3.tradingview.com/tv.js';
-        script.async = true;
-        script.onload = () => {
-            if (containerRef.current && window.TradingView) {
-                new window.TradingView.widget({
-                    autosize: true,
-                    symbol: "NASDAQ:AAPL",
-                    interval: "D",
-                    timezone: "Etc/UTC",
-                    theme: "dark",
-                    style: "1",
-                    locale: "en",
-                    toolbar_bg: "#f1f3f6",
-                    enable_publishing: false,
-                    allow_symbol_change: true,
-                    container_id: containerRef.current.id,
-                });
+        const loadData = async () => {
+            try {
+                const history = await fetchTrueDataHistory('NIFTY 50', 'D');
+                setData(history);
+            } catch (error) {
+                console.error("Failed to load chart data", error);
+            } finally {
+                setIsLoading(false);
             }
         };
-        document.head.appendChild(script);
 
-        return () => {
-            // Cleanup script if needed
-        };
+        loadData();
     }, []);
 
     return (
-        <div className="h-full w-full bg-dark-card rounded-lg shadow-lg overflow-hidden border border-slate-700">
-            <div id="tradingview_widget" ref={containerRef} className="h-full w-full" />
+        <div className="h-full w-full bg-dark-card rounded-lg shadow-lg overflow-hidden border border-slate-700 relative">
+            {isLoading ? (
+                <div className="absolute inset-0 flex items-center justify-center text-slate-400">
+                    Loading Chart Data...
+                </div>
+            ) : (
+                <LightweightChart data={data} />
+            )}
         </div>
     );
 };
