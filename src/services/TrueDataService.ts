@@ -1,3 +1,5 @@
+import { aggregateDailyToWeekly } from '../utils/dataUtils';
+
 export interface OHLCVData {
     time: number; // Unix timestamp in seconds
     open: number;
@@ -15,11 +17,20 @@ export const fetchTrueDataHistory = async (
 
     console.log(`Generating mock data for ${symbol} @ ${interval}`);
 
-    if (symbol === "RELIANCE" && interval === "1D") {
-        try {
-            return await fetchRelianceData();
-        } catch (error) {
-            console.error("Failed to fetch real data, falling back to mock", error);
+    if (symbol === "RELIANCE") {
+        if (interval === "1D") {
+            try {
+                return await fetchRelianceData();
+            } catch (error) {
+                console.error("Failed to fetch real data, falling back to mock", error);
+            }
+        } else if (interval === "1W") {
+            try {
+                const dailyData = await fetchRelianceData();
+                return aggregateDailyToWeekly(dailyData);
+            } catch (error) {
+                console.error("Failed to fetch real data for weekly aggregation, falling back to mock", error);
+            }
         }
     }
 
