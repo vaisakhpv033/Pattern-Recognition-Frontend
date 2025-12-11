@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import ChartContainer from './components/ChartContainer';
 import PatternForm from './components/PatternForm';
-import ResultsPanel from './components/ResultsPanel';
 import { type PatternData } from './services/mockBackend';
 import { fetch52WeekHigh, fetchPatternScanData } from './services/patternService';
 import { useMarketStore } from './store/marketStore';

@@ -19,7 +19,6 @@ const ChartContainer: FC = () => {
         patternMarkers: markers,
         overlaySeries: seriesData,
         overlaySeriesName: seriesName,
-        overlayColor: overlayColor,
         patternMode,
         resetPatternMode,
         // updateLiveCandle
