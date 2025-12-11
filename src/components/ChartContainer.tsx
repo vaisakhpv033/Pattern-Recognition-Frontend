@@ -3,6 +3,8 @@ import { LightweightChart } from './LightweightChart';
 // import { subscribeToLiveData } from '../services/TrueDataService';
 import { useMarketStore } from '../store/marketStore';
 import { SymbolSearch } from './SymbolSearch';
+import TradingViewChart from './pattern/TradingViewChart';
+import clsx from 'clsx';
 
 const ChartContainer: FC = () => {
     const {
@@ -12,6 +14,13 @@ const ChartContainer: FC = () => {
         isLoading,
         setInterval,
         loadData,
+        patternPriceData: priceData,
+        patternMarkers: markers,
+        overlaySeries: seriesData,
+        overlaySeriesName: seriesName,
+        overlayColor: overlayColor,
+        patternMode,
+        resetPatternMode,
         // updateLiveCandle
     } = useMarketStore();
 
@@ -56,6 +65,7 @@ const ChartContainer: FC = () => {
                             {tf}
                         </button>
                     ))}
+                <button onClick={resetPatternMode}>Reset</button>
                 {lastCandle && (
                     <div className="ml-auto flex gap-4 text-xs font-mono text-slate-300 px-2">
                         <span>O: {lastCandle.open.toFixed(2)}</span>
@@ -65,6 +75,7 @@ const ChartContainer: FC = () => {
                     </div>
                 )}
             </div>
+            {!patternMode && (
             <div className="flex-1 relative">
                 {isLoading && data.length === 0 ? (
                     <div className="absolute inset-0 flex items-center justify-center text-slate-400">
@@ -78,6 +89,19 @@ const ChartContainer: FC = () => {
                     />
                 )}
             </div>
+            )}
+                {patternMode && (
+            <div className="flex-1 relative">
+                    <TradingViewChart
+                        priceData={priceData || []}
+                        markers={markers}
+                        chartTitle={currentSymbol}
+                        parameterSeriesName={seriesName}
+                        parameterSeriesData={seriesData || []}
+                    /> 
+
+            </div>
+            )}
         </div>
     );
 };

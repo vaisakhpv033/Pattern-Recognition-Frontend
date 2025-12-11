@@ -13,7 +13,7 @@ const PatternForm: FC<PatternFormProps> = ({ onAnalyze, isLoading }) => {
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        onAnalyze({ pattern, weeks, parameter });
+        onAnalyze({ pattern, weeks, parameter: parameter || null });
     };
 
     return (
@@ -32,25 +32,28 @@ const PatternForm: FC<PatternFormProps> = ({ onAnalyze, isLoading }) => {
                 </select>
             </div>
 
-            <div className="mb-4">
-                <label className="block text-sm font-medium mb-2 text-slate-300">Weeks (1-100)</label>
-                <input
-                    type="number"
-                    min="1"
-                    max="100"
-                    value={weeks}
-                    onChange={(e) => setWeeks(Number(e.target.value))}
-                    className="w-full bg-slate-800 border border-slate-600 rounded p-2 text-white focus:ring-2 focus:ring-brand-primary outline-none"
-                />
-            </div>
+            {pattern === 'nrb' && (
+                <div className="mb-4">
+                    <label className="block text-sm font-medium mb-2 text-slate-300">Weeks (1-100)</label>
+                    <input
+                        type="number"
+                        min="1"
+                        max="100"
+                        value={weeks}
+                        onChange={(e) => setWeeks(Number(e.target.value))}
+                        className="w-full bg-slate-800 border border-slate-600 rounded p-2 text-white focus:ring-2 focus:ring-brand-primary outline-none"
+                    />
+                </div>
+            )}
 
             <div className="mb-6">
-                <label className="block text-sm font-medium mb-2 text-slate-300">Parameter</label>
+                <label className="block text-sm font-medium mb-2 text-slate-300">Parameter (Optional)</label>
                 <select
                     value={parameter}
                     onChange={(e) => setParameter(e.target.value)}
                     className="w-full bg-slate-800 border border-slate-600 rounded p-2 text-white focus:ring-2 focus:ring-brand-primary outline-none"
                 >
+                    <option value="">None</option>
                     <option value="ema21">EMA 21</option>
                     <option value="ema50">EMA 50</option>
                     <option value="ema200">EMA 200</option>

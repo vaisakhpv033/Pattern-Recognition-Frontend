@@ -1,7 +1,7 @@
 export interface PatternData {
     pattern: string;
     weeks: number;
-    parameter: string;
+    parameter: string | null;
 }
 
 export interface AnalysisResult {

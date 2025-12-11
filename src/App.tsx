@@ -2,17 +2,17 @@ import { useState, useEffect } from 'react';
 import ChartContainer from './components/ChartContainer';
 import PatternForm from './components/PatternForm';
 import ResultsPanel from './components/ResultsPanel';
-import { analyzePattern, type PatternData, type AnalysisResult } from './services/mockBackend';
-import { fetch52WeekHigh } from './services/patternService';
+import { type PatternData } from './services/mockBackend';
+import { fetch52WeekHigh, fetchPatternScanData } from './services/patternService';
 import { useMarketStore } from './store/marketStore';
 import { ScrollArea } from './components/ui/scroll-area';
 
 function App() {
-  const [results, setResults] = useState<AnalysisResult | null>(null);
+  // const [results, setResults] = useState<AnalysisResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [week52High, setWeek52High] = useState<number | null | 'unavailable'>(null);
 
-  const { currentSymbol } = useMarketStore();
+  const { currentSymbol, setPatternData } = useMarketStore();
 
   useEffect(() => {
     const load52WeekHigh = async () => {
@@ -34,8 +34,31 @@ function App() {
   const handleAnalyze = async (data: PatternData) => {
     setIsLoading(true);
     try {
-      const result = await analyzePattern(data);
-      setResults(result);
+      // Call the real backend
+      const response = await fetchPatternScanData(
+        currentSymbol,
+        data.pattern === 'nrb' ? 'Narrow Range Break' : 'Bowl', // Map internal values to backend expectations
+        null, // nrbLookback
+        0, // successRate
+        data.weeks,
+        data.parameter // series
+      );
+
+      console.log('Normalized Pattern Data:', response);
+
+      // Update the store which will auto-update the chart
+      setPatternData(
+        response.markers,
+        response.price_data,
+        response.series_data,
+        response.series,
+        // Optional: map parameter to a color, or just use default.
+        // Orange for the series line
+      );
+
+      // Optionally set some results state if you still use ResultsPanel
+      // setResults(...);
+
     } catch (error) {
       console.error("Analysis failed", error);
     } finally {
