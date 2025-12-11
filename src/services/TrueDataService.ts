@@ -114,7 +114,7 @@ export type CandleCallback = (candle: OHLCVData) => void;
 
 const fetchPriceHistory = async (symbol: string): Promise<OHLCVData[]> => {
     // const response = await fetch(`https://trading.aiswaryasathyan.space/api/price-history/?scrip=${symbol}.NS&years=10`);
-    const response = await fetch(`http://127.0.0.1:8000/api/price-history/?scrip=${symbol}`);
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/price-history/?scrip=${symbol}`);
 
     if (!response.ok) {
         throw new Error(`API Error: ${response.statusText}`);

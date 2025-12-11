@@ -52,9 +52,9 @@ export function SymbolSearch() {
     const fetchSymbols = async (searchTerm: string) => {
         setLoading(true);
         try {
-            // Using logic from prompt: http://127.0.0.1:8000/api/symbols/?q=a&page=2
+            // Using logic from prompt: /api/symbols/?q=a&page=2
             // We'll just fetch page 1 for now. Infinite scroll can be added if needed but ScrollArea + 50 results is usually okay for MVP first step.
-            const response = await fetch(`http://127.0.0.1:8000/api/symbols/?q=${encodeURIComponent(searchTerm)}`);
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/symbols/?q=${encodeURIComponent(searchTerm)}`);
             if (!response.ok) throw new Error("Failed to search symbols");
 
             const data: SymbolResponse = await response.json();
