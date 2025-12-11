@@ -4,6 +4,8 @@ import { LightweightChart } from './LightweightChart';
 import { useMarketStore } from '../store/marketStore';
 import { SymbolSearch } from './SymbolSearch';
 import TradingViewChart from './pattern/TradingViewChart';
+import { Trash } from 'lucide-react';
+import clsx from 'clsx';
 
 const ChartContainer: FC = () => {
     const {
@@ -64,7 +66,8 @@ const ChartContainer: FC = () => {
                             {tf}
                         </button>
                     ))}
-                <button onClick={resetPatternMode}>Reset</button>
+                
+                <button disabled={!patternMode} className={clsx("text-slate-400 cursor-not-allowed opacity-50", patternMode && "cursor-pointer hover:text-slate-200 hover:bg-slate-800")} onClick={resetPatternMode}><Trash className="h-4 w-4" /></button>
                 {lastCandle && (
                     <div className="ml-auto flex gap-4 text-xs font-mono text-slate-300 px-2">
                         <span>O: {lastCandle.open.toFixed(2)}</span>

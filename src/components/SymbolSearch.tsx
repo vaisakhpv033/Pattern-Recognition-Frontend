@@ -23,7 +23,7 @@ interface SymbolResponse {
 }
 
 export function SymbolSearch() {
-    const { currentSymbol, setSymbol } = useMarketStore();
+    const { currentSymbol, setSymbol, resetPatternMode } = useMarketStore();
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState("");
     const [results, setResults] = useState<SymbolResult[]>([]);
@@ -61,12 +61,14 @@ export function SymbolSearch() {
             setResults([]);
         } finally {
             setLoading(false);
+            
         }
     };
 
     const handleSelect = (symbol: string) => {
         setSymbol(symbol);
         setOpen(false);
+        resetPatternMode();
     };
 
     return (
