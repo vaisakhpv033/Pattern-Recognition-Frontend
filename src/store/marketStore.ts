@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { fetchTrueDataHistory, type OHLCVData } from '../services/TrueDataService';
+import type { Marker, SeriesPoint, PriceData } from '../services/patternService';
 
 interface MarketState {
     currentSymbol: string;
@@ -8,18 +9,37 @@ interface MarketState {
     isLoading: boolean;
     error: string | null;
 
+    // Pattern Mode State
+    patternMode: boolean;
+    patternMarkers: Marker[];
+    patternPriceData: PriceData[] | null;
+    overlaySeries: SeriesPoint[] | null;
+    overlaySeriesName: string | null;
+    overlayColor: string; // Color for the overlay line
+
     setSymbol: (symbol: string) => void;
     setInterval: (interval: "1D" | "1W" | "1m") => void;
     loadData: () => Promise<void>;
     updateLiveCandle: (candle: OHLCVData) => void;
+
+    // Pattern actions
+    setPatternData: (markers: Marker[], priceData:PriceData[], series_data?: SeriesPoint[], seriesName?:string | null, overlayColor?: string) => void;
+    resetPatternMode: () => void;
 }
 
 export const useMarketStore = create<MarketState>((set, get) => ({
-    currentSymbol: "SENSEX",
+    currentSymbol: "TCS",
     currentInterval: "1D",
     dataCache: {},
     isLoading: false,
     error: null,
+
+    patternMode: false,
+    patternMarkers: [],
+    patternPriceData: [],
+    overlaySeries: null,
+    overlaySeriesName: null,
+    overlayColor: '#2962FF',
 
     setSymbol: (symbol) => {
         set({ currentSymbol: symbol });
@@ -91,5 +111,31 @@ export const useMarketStore = create<MarketState>((set, get) => ({
                 }));
             }
         }
+    },
+
+setPatternData: (
+    markers,
+    priceData,
+    seriesData = [],
+    seriesName = null,
+    overlayColor = "#2962FF"
+) => {
+    set({
+        patternMode: true,
+        patternMarkers: markers,
+        patternPriceData: priceData,
+        overlaySeries: seriesData.length > 0 ? seriesData : null,
+        overlaySeriesName: seriesName,
+        overlayColor
+    });
+},
+    resetPatternMode: () => {
+        set({
+            patternMode: false,
+            patternMarkers: [],
+            patternPriceData: [],
+            overlaySeriesName: null, 
+            overlaySeries: null
+        });
     }
 }));
